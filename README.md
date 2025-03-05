@@ -28,8 +28,8 @@ api_key = os.getenv('RUFUS_API_KEY')
 client = RufusClient(api_key=api_key)
 
 # Scrape a website with specific instructions
-instructions = "We're making a chatbot for HR in San Francisco."
-documents = client.scrape("https://www.sfgov.org", instructions, max_pages=10, depth=2)
+instructions = "Information on Mars"
+documents = client.scrape("https://science.nasa.gov/mars/", instructions, max_pages=10, depth=2)
 
 # Print summary of found documents
 print(client.get_summary(documents))
@@ -119,8 +119,8 @@ async def main():
     
     # Scrape SPA or JS-heavy website
     documents = await client.scrape(
-        "https://example.com/spa",
-        instructions="Extract product information",
+        "[https://example.com/spa](https://science.nasa.gov/mars/)",
+        instructions="Extract information on Mars.",
         max_pages=5
     )
     

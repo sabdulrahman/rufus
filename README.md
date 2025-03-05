@@ -98,6 +98,37 @@ Update the configuration settings.
 
 - `config`: New configuration settings
 
+## Headless Browser Integration
+
+For JavaScript-heavy websites, Rufus supports headless browsers:
+
+```python
+from rufus import RufusClient
+import asyncio
+
+async def main():
+    # Initialize client with browser support
+    client = RufusClient(api_key="your_api_key")
+    
+    # Enable headless browser
+    client.set_config({
+        "use_browser": True,
+        "browser_type": "playwright",  # or "selenium"
+        "browser_wait_time": 2  # Wait 2 seconds after page load
+    })
+    
+    # Scrape SPA or JS-heavy website
+    documents = await client.scrape(
+        "https://example.com/spa",
+        instructions="Extract product information",
+        max_pages=5
+    )
+    
+    print(f"Extracted {len(documents)} documents")
+
+# Run the async function
+asyncio.run(main())
+```
 ## Requirements
 
 - Python 3.8+
@@ -105,7 +136,8 @@ Update the configuration settings.
 - Requests
 - aiohttp (for asynchronous crawling)
 - OpenAI API key (or compatible LLM provider)
-
+- playwright
+- selenium
 ## License
 
 MIT

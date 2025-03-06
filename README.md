@@ -20,21 +20,31 @@ pip install rufus
 ## Quick Start
 
 ```python
-from rufus import RufusClient
+import nest_asyncio
+import asyncio
+import json
 import os
+from rufus import RufusClient
 
-# Get API key
+# Apply nest_asyncio to allow nested event loops
+nest_asyncio.apply()
+
+# Set up the API key and client
 api_key = os.getenv('RUFUS_API_KEY')
 client = RufusClient(api_key=api_key)
 
-# Scrape a website with specific instructions
-instructions = "Information on Mars"
-documents = client.scrape("https://science.nasa.gov/mars/", instructions, max_pages=10, depth=2)
+# Define an async function for our scraping
+async def run_scraper():
+    instructions = "Information on Mars"
+    documents = await client.scrape("https://science.nasa.gov/mars/", instructions, max_pages=2, depth=2)
+    return documents
 
-# Print summary of found documents
-print(client.get_summary(documents))
+# Run the async function using the current event loop
+documents = asyncio.get_event_loop().run_until_complete(run_scraper())
 
-# Save documents for use in a RAG system
+# Now we can work with the documents
+print(f"Found {len(documents)} documents")
+
 with open("documents.json", "w") as f:
     json.dump(documents, f, indent=2)
 ```
@@ -100,37 +110,8 @@ Update the configuration settings.
 
 ## Headless Browser Integration
 
-For JavaScript-heavy websites, Rufus supports headless browsers:
+For JavaScript-heavy websites, Rufus supports headless browsers.
 
-```python
-import nest_asyncio
-import asyncio
-import json
-import os
-from rufus import RufusClient
-
-# Apply nest_asyncio to allow nested event loops
-nest_asyncio.apply()
-
-# Set up the API key and client
-api_key = os.getenv('RUFUS_API_KEY')
-client = RufusClient(api_key=api_key)
-
-# Define an async function for our scraping
-async def run_scraper():
-    instructions = "Information on Mars"
-    documents = await client.scrape("https://science.nasa.gov/mars/", instructions, max_pages=2, depth=2)
-    return documents
-
-# Run the async function using the current event loop
-documents = asyncio.get_event_loop().run_until_complete(run_scraper())
-
-# Now we can work with the documents
-print(f"Found {len(documents)} documents")
-
-with open("documents.json", "w") as f:
-    json.dump(documents, f, indent=2)
-```
 ## Requirements
 
 - Python 3.8+

@@ -25,6 +25,9 @@ import asyncio
 import json
 import os
 from rufus import RufusClient
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Apply nest_asyncio to allow nested event loops
 nest_asyncio.apply()

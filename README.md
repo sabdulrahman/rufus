@@ -103,31 +103,33 @@ Update the configuration settings.
 For JavaScript-heavy websites, Rufus supports headless browsers:
 
 ```python
-from rufus import RufusClient
+import nest_asyncio
 import asyncio
+import json
+import os
+from rufus import RufusClient
 
-async def main():
-    # Initialize client with browser support
-    client = RufusClient(api_key="your_api_key")
-    
-    # Enable headless browser
-    client.set_config({
-        "use_browser": True,
-        "browser_type": "playwright",  # or "selenium"
-        "browser_wait_time": 2  # Wait 2 seconds after page load
-    })
-    
-    # Scrape SPA or JS-heavy website
-    documents = await client.scrape(
-        "[https://example.com/spa](https://science.nasa.gov/mars/)",
-        instructions="Extract information on Mars.",
-        max_pages=5
-    )
-    
-    print(f"Extracted {len(documents)} documents")
+# Apply nest_asyncio to allow nested event loops
+nest_asyncio.apply()
 
-# Run the async function
-asyncio.run(main())
+# Set up the API key and client
+api_key = os.getenv('RUFUS_API_KEY')
+client = RufusClient(api_key=api_key)
+
+# Define an async function for our scraping
+async def run_scraper():
+    instructions = "Information on Mars"
+    documents = await client.scrape("https://science.nasa.gov/mars/", instructions, max_pages=2, depth=2)
+    return documents
+
+# Run the async function using the current event loop
+documents = asyncio.get_event_loop().run_until_complete(run_scraper())
+
+# Now we can work with the documents
+print(f"Found {len(documents)} documents")
+
+with open("documents.json", "w") as f:
+    json.dump(documents, f, indent=2)
 ```
 ## Requirements
 
